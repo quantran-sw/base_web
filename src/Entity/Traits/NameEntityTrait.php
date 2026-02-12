@@ -4,7 +4,7 @@ namespace App\Entity\Traits;
 
 use Doctrine\ORM\Mapping as ORM;
 
-trait NameTrait
+trait NameEntityTrait
 {
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $name = null;

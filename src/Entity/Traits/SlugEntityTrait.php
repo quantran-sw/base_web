@@ -2,7 +2,9 @@
 
 namespace App\Entity\Traits;
 
-trait SlugTrait
+use Doctrine\ORM\Mapping as ORM;
+
+trait SlugEntityTrait
 {
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $slug = null;

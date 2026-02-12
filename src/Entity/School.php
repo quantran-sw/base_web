@@ -2,60 +2,65 @@
 
 namespace App\Entity;
 
-use App\Entity\Traits\IdTrait;
-use App\Entity\Traits\NameTrait;
-use App\Entity\Traits\SlugTrait;
+use App\Entity\Traits\IdEntityTrait;
+use App\Entity\Traits\NameEntityTrait;
+use App\Entity\Traits\OldSlugsEntityTrait;
+use App\Entity\Traits\SlugEntityTrait;
+use App\Entity\Traits\StatusEntityTrait;
+use App\Entity\Traits\TimestampEntityTrait;
 use App\Repository\SchoolRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: SchoolRepository::class)]
+#[ORM\HasLifecycleCallbacks()]
 class School
 {
-    use IdTrait;
-    use NameTrait;
-    use SlugTrait;
+    use IdEntityTrait;
+    use NameEntityTrait;
+    use SlugEntityTrait;
+    use OldSlugsEntityTrait;
+    use StatusEntityTrait;
+    use TimestampEntityTrait;
 
-    #[ORM\Column(nullable: true)]
-    private ?int $status = null;
+    /**
+     * @var Collection<int, Program>
+     */
+    #[ORM\OneToMany(targetEntity: Program::class, mappedBy: 'school')]
+    private Collection $programs;
 
-    #[ORM\Column(nullable: true)]
-    private ?\DateTimeImmutable $createdAt = null;
-
-    #[ORM\Column(nullable: true)]
-    private ?\DateTimeImmutable $updatedAt = null;
-
-    public function getStatus(): ?int
+    public function __construct()
     {
-        return $this->status;
+        $this->programs = new ArrayCollection();
     }
 
-    public function setStatus(?int $status): static
+    /**
+     * @return Collection<int, Program>
+     */
+    public function getPrograms(): Collection
     {
-        $this->status = $status;
+        return $this->programs;
+    }
+
+    public function addProgram(Program $program): static
+    {
+        if (!$this->programs->contains($program)) {
+            $this->programs->add($program);
+            $program->setSchool($this);
+        }
 
         return $this;
     }
 
-    public function getCreatedAt(): ?\DateTimeImmutable
+    public function removeProgram(Program $program): static
     {
-        return $this->createdAt;
-    }
-
-    public function setCreatedAt(?\DateTimeImmutable $createdAt): static
-    {
-        $this->createdAt = $createdAt;
-
-        return $this;
-    }
-
-    public function getUpdatedAt(): ?\DateTimeImmutable
-    {
-        return $this->updatedAt;
-    }
-
-    public function setUpdatedAt(?\DateTimeImmutable $updatedAt): static
-    {
-        $this->updatedAt = $updatedAt;
+        if ($this->programs->removeElement($program)) {
+            // set the owning side to null (unless already changed)
+            if ($program->getSchool() === $this) {
+                $program->setSchool(null);
+            }
+        }
 
         return $this;
     }

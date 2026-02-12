@@ -1,0 +1,21 @@
+meta {
+  name: Create One
+  type: http
+  seq: 1
+}
+
+post {
+  url: http://base-web-local.com/index.php/api/school/create-one
+  body: formUrlEncoded
+  auth: inherit
+}
+
+body:form-urlencoded {
+  name: Test 2
+  status: 0
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

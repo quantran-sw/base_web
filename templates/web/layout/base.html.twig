@@ -1,0 +1,40 @@
+{% set page_title = seo.seo.title|default(constant('App\\Constant::PAGE_TITLE')) %}
+{% set page_description = seo.seo.description|default(constant('App\\Constant::PAGE_DESCRIPTION')) %}
+
+<!DOCTYPE html>
+<html lang="vi">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        {# SEO Basic #}
+        <title>{{ page_title }}</title>
+        <meta name="description" content="{{ page_description }}">
+        <meta name="robots" content="index, follow">
+        <link rel="canonical" href="{{ app.request.uri }}">
+
+        {# Open Graph / Facebook #}
+        <meta property="og:type" content="website">
+        <meta property="og:url" content="{{ app.request.uri }}">
+        <meta property="og:title" content="{{ page_title }}">
+        <meta property="og:description" content="{{ page_description }}">
+
+        {# Twitter #}
+        <meta name="twitter:card" content="summary_large_image">
+        <meta name="twitter:title" content="{{ page_title }}">
+        <meta name="twitter:description" content="{{ page_description }}">
+
+        {# Images #}
+        {% if seo.seo.image|default(null) %}
+            <meta property="og:image" content="{{ seo.seo.image }}">
+            <meta name="twitter:image" content="{{ seo.seo.image }}">
+        {% endif %}
+
+        {% block stylesheets %}
+            {{ encore_entry_link_tags('app') }}
+        {% endblock %}
+    </head>
+    <body>
+        {% block body %}{% endblock %}
+    </body>
+</html>
